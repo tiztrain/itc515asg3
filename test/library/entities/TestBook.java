@@ -69,4 +69,16 @@ class TestBook {
 		//assert
 		assertEquals("Book: cannot borrow while state does not equal available", t.getMessage());
 	}
+	
+	@Test
+	void testBorrowFromLibraryWhenDAMAGED() {
+		//arrange
+		book.borrowFromLibrary();
+		assertTrue(book.isDamaged());
+		//act
+		Executable e = () -> book.borrowFromLibrary();
+		Throwable t = assertThrows(RuntimeException.class,e);
+		//assert
+		assertEquals("Book: cannot borrow while state does not equal available", t.getMessage());
+	}
 }
