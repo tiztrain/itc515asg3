@@ -11,32 +11,35 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.Mockito.*;
 
 import library.entities.helpers.IBookHelper;
 import library.entities.helpers.ILoanHelper;
 import library.entities.helpers.IPatronHelper;
 import library.entities.helpers.PatronHelper;
 
+@ExtendWith(MockitoExtension.class)
 class TestLibrary {
-
-	static final int LOAN_LIMIT = 2;
-	static final int LOAN_PERIOD = 2;
-	static final double FINE_PER_DAY = 1.0;
-	static final double MAX_FINES_OWED = 1.0;
 	
 	Library library;
-	Patron patron;
-	Loan loan;
+	@Mock Patron patron;
+	
 	IBookHelper bookHelper;
 	IPatronHelper patronHelper;
 	ILoanHelper loanHelper;
 	
-	String lastName;
-	String firstName;
-	String email;
-	long phoneNo;
+	String lastName = "Smith";
+	String firstName = "Bob";
+	String email = "bob.smith@gmail.com";
+	long phoneNo = 61412345678L;
 	int id = 1;
-	//IPatron patron;
+	
+	int loanLimit = 2;
+	double maxFinesOwed = 1;
 
 
 	@BeforeEach
@@ -53,19 +56,14 @@ class TestLibrary {
 	@Test
 	void testPatronCanBorrow() {
 		//arrange all necessary preconditions and inputs
-		lastName = "Smith";
-		firstName = "Bob";
-		email = "bob.smith@gmail.com";
-		phoneNo = 61412345678L;
-		id = 1;
-		patronHelper.makePatron(lastName, firstName, email, phoneNo, id);
-		
+		verify(patron);
+				
 		//act on the object or method under test
 
-		library.patronCanBorrow(patron);
 		//assert that the expected results have occurred
-		assertTrue(isValidPatron);
-		assertFalse("failure: Patron has overdue loans", library.patronCanBorrow(patron));
+		assertFalse(patron.hasOverDueLoans());
+		assertEquals(loanLimit, patron.getNumberOfCurrentLoans());
+		assertFalse(patron.getFinesPayable() >= maxFinesOwed);
 	}
 	
 	
