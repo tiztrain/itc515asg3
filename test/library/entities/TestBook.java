@@ -52,9 +52,10 @@ class TestBook {
 	void testBorrowFromLibrary() {
 		//arrange
 		state = BookState.AVAILABLE;
-		//act
-		//Assert.ThrowsException<System.ArgumentException(()-> )>
+		//act		
 		//assert
+		assertThrows(RuntimeException.class, () -> assertEquals(BookState.AVAILABLE, state), (String.format("Book: cannot borrow while book is in state: %s", state)));		
+		state = BookState.ON_LOAN;
 	}
 
 }
