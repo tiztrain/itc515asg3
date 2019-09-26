@@ -20,6 +20,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+
 import static org.mockito.Mockito.*;
 
 import library.entities.ILoan.LoanState;
@@ -29,6 +32,7 @@ import library.entities.helpers.IPatronHelper;
 import library.entities.helpers.PatronHelper;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class TestLibrary {
 	
 	//Library library;
@@ -92,19 +96,38 @@ class TestLibrary {
 	
 	@InjectMocks Library library = new Library(bookHelper, patronHelper, loanHelper);
 
-	@Test
-	void testPatronCanBorrow() {
-		//arrange all necessary preconditions and inputs
-		assertTrue(patron instanceof Patron);
-				
-		//act on the object or method under test
+    @Test
+    void testPatronCanBorrowAllOK() {
+        //arrange all necessary preconditions and inputs
+        IPatron mockPatron = mock(IPatron.class);
+        assertTrue(mockPatron instanceof IPatron);
+        when(mockPatron.getNumberOfCurrentLoans()).thenReturn(0);
+        when(mockPatron.getFinesPayable()).thenReturn(0.0);
+        when(mockPatron.hasOverDueLoans()).thenReturn(false);
+                
+        //act on the object or method under test
+        boolean actual = library.patronCanBorrow(mockPatron);
 
-		//assert that the expected results have occurred
-		assertFalse(patron.hasOverDueLoans());
-		assertFalse(loanLimit >= patron.getNumberOfCurrentLoans());
-		assertFalse(patron.getFinesPayable() >= maxFinesOwed);
-	}
-	
+        //assert that the expected results have occurred
+        assertTrue(actual);
+    }
+    
+    @Test
+    void testPatronCanBorrowPatronAtLoanMax() {
+        //arrange all necessary preconditions and inputs
+        IPatron mockPatron = mock(IPatron.class);
+        assertTrue(mockPatron instanceof IPatron);
+        when(mockPatron.getNumberOfCurrentLoans()).thenReturn(2);
+        when(mockPatron.getFinesPayable()).thenReturn(0.0);
+        when(mockPatron.hasOverDueLoans()).thenReturn(false);
+                
+        //act on the object or method under test
+        boolean actual = library.patronCanBorrow(mockPatron);
+
+        //assert that the expected results have occurred
+        assertFalse(actual);
+    }
+    
 	@Test
 	void testcommitLoanWhenNotPENDING() {
 		//arrange all necessary preconditions and inputs
