@@ -42,11 +42,20 @@ class TestBook {
 	}
 
 	@Test
-	void testIsAvailable() {
+	void testIsAvailableWhenAVAILABLE() {
 		//arrange
 		//act
 		//assert
-		assertTrue("The book is available", book.isAvailable());
+		assertTrue(book.isAvailable());
+	}
+	
+	@Test
+	void testIsAvailableWhenONLOAN() {
+		//arrange
+		book.borrowFromLibrary();
+		//act
+		//assert
+		assertFalse(book.isAvailable());
 	}
 	
 	@Test
@@ -67,18 +76,19 @@ class TestBook {
 		Executable e = () -> book.borrowFromLibrary();
 		Throwable t = assertThrows(RuntimeException.class,e);
 		//assert
-		assertEquals("Book: cannot borrow while state does not equal available", t.getMessage());
+		assertEquals("Book: cannot borrow while book is in state: ON_LOAN", t.getMessage());
 	}
 	
 	@Test
 	void testBorrowFromLibraryWhenDAMAGED() {
 		//arrange
 		book.borrowFromLibrary();
+		book.returnToLibrary(true);
 		assertTrue(book.isDamaged());
 		//act
 		Executable e = () -> book.borrowFromLibrary();
 		Throwable t = assertThrows(RuntimeException.class,e);
 		//assert
-		assertEquals("Book: cannot borrow while state does not equal available", t.getMessage());
+		assertEquals("Book: cannot borrow while book is in state: DAMAGED", t.getMessage());
 	}
 }
