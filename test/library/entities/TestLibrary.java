@@ -20,6 +20,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+
 import static org.mockito.Mockito.*;
 
 import library.entities.ILoan.LoanState;
@@ -29,12 +32,12 @@ import library.entities.helpers.IPatronHelper;
 import library.entities.helpers.PatronHelper;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class TestLibrary {
 	
-	//Library library;
-	@Mock Patron patron;
-	@Mock Loan loan;
-	@Mock Book book;
+	@Mock IPatron mockPatron;
+	@Mock ILoan mockLoan;
+	@Mock IBook mockBook;
 	
 	@Spy Map<Integer, ILoan> loans;
 	@Spy Map<Integer, ILoan> currentLoans;
@@ -43,46 +46,49 @@ class TestLibrary {
 	IPatronHelper patronHelper;
 	ILoanHelper loanHelper;
 	
-	String lastName;
-	String firstName;
-	String email;
-	long phoneNo;
-	int id;
-	
-	String author;
-	String title;
-	String callNo;
-	int bookId;
-	
-	int loanId;
-	Date dueDate;
-	SimpleDateFormat format;
-	
-	int loanLimit = 2;
-	double maxFinesOwed = 1;
+//	String lastName;
+//	String firstName;
+//	String email;
+//	long phoneNo;
+//	int id;
+//	
+//	String author;
+//	String title;
+//	String callNo;
+//	int bookId;
+//	
+//	int loanId;
+//	Date dueDate;
+//	SimpleDateFormat format;
+//	
+//	int loanLimit = 2;
+//	double maxFinesOwed = 1;
 
+	@InjectMocks
+	Library library = new Library(bookHelper, patronHelper, loanHelper,
+			null, null, loans, currentLoans, null, 0, 0, 0);
 
 	@BeforeEach
 	void setUp() throws Exception {
-		lastName = "Smith";
-		firstName = "Bob";
-		email = "bob.smith@gmail.com";
-		phoneNo = 61412345678L;
-		id = 1;
-		
-		author = "Tolken";
-		title = "Lord of the Rings";
-		callNo = "what is this";
-		bookId = 1;
-		
-		loanId = 1;
-		format = new SimpleDateFormat("dd-MM-yyyy");
-		dueDate = format.parse("01-01-2001");
-		
-		patron = new Patron(lastName, firstName, email, phoneNo, id);
-		//library = new Library(bookHelper, patronHelper, loanHelper);
-		book = new Book(author, title, callNo, bookId);
-		loan = new Loan(book, patron);
+//		lastName = "Smith";
+//		firstName = "Bob";
+//		email = "bob.smith@gmail.com";
+//		phoneNo = 61412345678L;
+//		id = 1;
+//		
+//		author = "Tolken";
+//		title = "Lord of the Rings";
+//		callNo = "what is this";
+//		bookId = 1;
+//		
+//		loanId = 1;
+//		format = new SimpleDateFormat("dd-MM-yyyy");
+//		dueDate = format.parse("01-01-2001");
+//		
+//		patron = new Patron(lastName, firstName, email, phoneNo, id);
+//		//library = new Library(bookHelper, patronHelper, loanHelper);
+//		book = new Book(author, title, callNo, bookId);
+//		loan = new Loan(book, patron);
 	}
 
 	@AfterEach
@@ -90,31 +96,33 @@ class TestLibrary {
 		library = null;
 	}
 	
-	@InjectMocks Library library = new Library(bookHelper, patronHelper, loanHelper);
 
 	@Test
 	void testPatronCanBorrow() {
 		//arrange all necessary preconditions and inputs
-		assertTrue(patron instanceof Patron);
-				
+		assertTrue(mockPatron instanceof IPatron);
+		when(mockPatron.getNumberOfCurrentLoans()).thenReturn(0);
+		when(mockPatron.getFinesPayable()).thenReturn(0.0);
+		when(mockPatron.hasOverDueLoans()).thenReturn(false);
+		
 		//act on the object or method under test
+		boolean actual = library.patronCanBorrow(mockPatron);
 
 		//assert that the expected results have occurred
-		assertFalse(patron.hasOverDueLoans());
-		assertFalse(loanLimit >= patron.getNumberOfCurrentLoans());
-		assertFalse(patron.getFinesPayable() >= maxFinesOwed);
+		assertTrue(actual);
 	}
+	
 	
 	@Test
 	void testcommitLoanWhenNotPENDING() {
-		//arrange all necessary preconditions and inputs
-		assertTrue(loan instanceof Loan);
+//		//arrange all necessary preconditions and inputs
+		assertTrue(mockLoan instanceof ILoan);
 //		LoanState correctState = LoanState.PENDING;
 //		assertTrue(correctState = loan.isPending());
 				
 		//act on the object or method under test
 
-		Executable e = () -> loan.commit(loanId, dueDate);
+		Executable e = () -> mockLoan.commit(loanId, dueDate);
 		Throwable t = assertThrows(RuntimeException.class,e);
 		//assert that the expected results have occurred
 		assertEquals("Loan: Cannot commit a non PENDING loan", t.getMessage());
@@ -122,16 +130,16 @@ class TestLibrary {
 	
 	@Test
 	void testcommitLoanWhenPENDING() {
-		//arrange all necessary preconditions and inputs
-		assertTrue(loan instanceof Loan);
-//		WHERE IS THE METHOD TO SEE IF PENDING IS TRUE?
-//		LoanState correctState = LoanState.PENDING;
-//		assertTrue(correctState = loan.isPending());
-				
-		//act on the object or method under test
-
-		//assert that the expected results have occurred
-//		assertEquals("Loan: Cannot commit a non PENDING loan", t.getMessage());
+//		//arrange all necessary preconditions and inputs
+//		assertTrue(mockLoan instanceof Loan);
+////		WHERE IS THE METHOD TO SEE IF PENDING IS TRUE?
+////		LoanState correctState = LoanState.PENDING;
+////		assertTrue(correctState = loan.isPending());
+//				
+//		//act on the object or method under test
+//
+//		//assert that the expected results have occurred
+////		assertEquals("Loan: Cannot commit a non PENDING loan", t.getMessage());
 	}
 
 }

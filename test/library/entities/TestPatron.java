@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -23,8 +24,7 @@ import library.entities.helpers.IPatronHelper;
 @ExtendWith(MockitoExtension.class)
 public class TestPatron {
 
-	Patron patron;
-	@Mock Loan loan;
+	@Mock ILoan loan;
 
 	String lastName = "Smith";
 	String firstName = "John";
@@ -34,10 +34,12 @@ public class TestPatron {
 	
 	Date currentDate;
 	SimpleDateFormat format;
+	
+	@InjectMocks
+	Patron patron = new Patron(lastName, firstName, email, phoneNo, id);
 
 	@BeforeEach
 	void setUp() throws Exception {
-		patron = new Patron(lastName, firstName, email, phoneNo, id);
 	}
 
 	@AfterEach
