@@ -47,24 +47,6 @@ class TestLibrary {
 	IPatronHelper patronHelper;
 	ILoanHelper loanHelper;
 	
-	
-//	String lastName;
-//	String firstName;
-//	String email;
-//	long phoneNo;
-//	int id;
-//	
-//	String author;
-//	String title;
-//	String callNo;
-//	int bookId;
-//	
-//	int loanId;
-//	Date dueDate;
-//	SimpleDateFormat format;
-//	
-//	int loanLimit = 2;
-//	double maxFinesOwed = 1;
 
 	@InjectMocks
 	Library library = new Library(bookHelper, patronHelper, loanHelper,
@@ -72,25 +54,6 @@ class TestLibrary {
 
 	@BeforeEach
 	void setUp() throws Exception {
-//		lastName = "Smith";
-//		firstName = "Bob";
-//		email = "bob.smith@gmail.com";
-//		phoneNo = 61412345678L;
-//		id = 1;
-//		
-//		author = "Tolken";
-//		title = "Lord of the Rings";
-//		callNo = "what is this";
-//		bookId = 1;
-//		
-//		loanId = 1;
-//		format = new SimpleDateFormat("dd-MM-yyyy");
-//		dueDate = format.parse("01-01-2001");
-//		
-//		patron = new Patron(lastName, firstName, email, phoneNo, id);
-//		//library = new Library(bookHelper, patronHelper, loanHelper);
-//		book = new Book(author, title, callNo, bookId);
-//		loan = new Loan(book, patron);
 	}
 
 	@AfterEach
@@ -118,8 +81,9 @@ class TestLibrary {
 	@Test
 	void testCommitLoanWhenPENDING() {
 		//arrange all necessary preconditions and inputs
-		assertTrue(mockLoan instanceof ILoan);
 		LoanState state = LoanState.PENDING;
+		Loan mockLoan = new Loan(mockBook, mockPatron, 0, null, state); //is this right?
+		assertTrue(mockLoan instanceof ILoan);
 		assertEquals(state, LoanState.PENDING);
 
 		//act on the object or method under test
@@ -127,10 +91,10 @@ class TestLibrary {
 		assertEquals(0, currentLoans.size());
 		assertEquals(0, patrons.size());
 		
-		library.commitLoan(mockLoan); //ERROR HERE
+		library.commitLoan(mockLoan);
 
 		//assert that the expected results have occurred
-		assertEquals(1, loans.size());
+		assertEquals(1, loans.size()); //ERROR expect 1 but got 0
 		assertEquals(1, currentLoans.size());
 		assertEquals(1, patrons.size());
 		assertTrue(mockBook.isOnLoan());
@@ -146,7 +110,7 @@ class TestLibrary {
 
 		//act on the object or method under test
 		Executable e = () -> mockLoan.commit(0, null);
-		Throwable t = assertThrows(RuntimeException.class,e);
+		Throwable t = assertThrows(RuntimeException.class,e); //ERROR NOTHING WAS THROWN
 
 		//assert that the expected results have occurred
 		assertEquals("Loan: Cannot commit a non PENDING loan", t.getMessage());
@@ -161,7 +125,7 @@ class TestLibrary {
 
 		//act on the object or method under test
 		Executable e = () -> mockLoan.commit(0, null);
-		Throwable t = assertThrows(RuntimeException.class,e);
+		Throwable t = assertThrows(RuntimeException.class,e); //ERROR NOTHING WAS THROWN
 
 		//assert that the expected results have occurred
 		assertEquals("Loan: Cannot commit a non PENDING loan", t.getMessage());
@@ -176,7 +140,7 @@ class TestLibrary {
 
 		//act on the object or method under test
 		Executable e = () -> mockLoan.commit(0, null);
-		Throwable t = assertThrows(RuntimeException.class,e);
+		Throwable t = assertThrows(RuntimeException.class,e); //ERROR NOTHING WAS THROWN
 
 		//assert that the expected results have occurred
 		assertEquals("Loan: Cannot commit a non PENDING loan", t.getMessage());
