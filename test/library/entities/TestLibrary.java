@@ -41,10 +41,12 @@ class TestLibrary {
 	
 	@Spy Map<Integer, ILoan> loans;
 	@Spy Map<Integer, ILoan> currentLoans;
+	@Spy Map<Integer, IPatron> patrons;
 	
 	IBookHelper bookHelper;
 	IPatronHelper patronHelper;
 	ILoanHelper loanHelper;
+	
 	
 //	String lastName;
 //	String firstName;
@@ -66,7 +68,7 @@ class TestLibrary {
 
 	@InjectMocks
 	Library library = new Library(bookHelper, patronHelper, loanHelper,
-			null, null, loans, currentLoans, null, 0, 0, 0);
+			null, patrons, loans, currentLoans, null, 0, 0, 0);
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -114,32 +116,69 @@ class TestLibrary {
 	
 	
 	@Test
-	void testcommitLoanWhenNotPENDING() {
-//		//arrange all necessary preconditions and inputs
+	void testCommitLoanWhenPENDING() {
+		//arrange all necessary preconditions and inputs
 		assertTrue(mockLoan instanceof ILoan);
-//		LoanState correctState = LoanState.PENDING;
-//		assertTrue(correctState = loan.isPending());
-				
-		//act on the object or method under test
+		LoanState state = LoanState.PENDING;
+		assertEquals(state, LoanState.PENDING);
 
-		Executable e = () -> mockLoan.commit(loanId, dueDate);
+		//act on the object or method under test
+		assertEquals(0, loans.size());
+		assertEquals(0, currentLoans.size());
+		assertEquals(0, patrons.size());
+		
+		library.commitLoan(mockLoan); //ERROR HERE
+
+		//assert that the expected results have occurred
+		assertEquals(1, loans.size());
+		assertEquals(1, currentLoans.size());
+		assertEquals(1, patrons.size());
+		assertTrue(mockBook.isOnLoan());
+		assertEquals(state, LoanState.CURRENT);
+	}
+	
+	
+	@Test
+	void testcommitLoanWhenCURRENT() {
+		//mockLoan = new ILoan(mockBook, mockLoan, 0, 0, LoanState.CURRENT);
+		assertTrue(mockLoan instanceof ILoan);
+		LoanState state = LoanState.CURRENT;
+
+		//act on the object or method under test
+		Executable e = () -> mockLoan.commit(0, null);
 		Throwable t = assertThrows(RuntimeException.class,e);
+
 		//assert that the expected results have occurred
 		assertEquals("Loan: Cannot commit a non PENDING loan", t.getMessage());
 	}
 	
+	
 	@Test
-	void testcommitLoanWhenPENDING() {
-//		//arrange all necessary preconditions and inputs
-//		assertTrue(mockLoan instanceof Loan);
-////		WHERE IS THE METHOD TO SEE IF PENDING IS TRUE?
-////		LoanState correctState = LoanState.PENDING;
-////		assertTrue(correctState = loan.isPending());
-//				
-//		//act on the object or method under test
-//
-//		//assert that the expected results have occurred
-////		assertEquals("Loan: Cannot commit a non PENDING loan", t.getMessage());
+	void testcommitLoanWhenOVERDUE() {
+		//mockLoan = new ILoan(mockBook, mockLoan, 0, 0, LoanState.CURRENT);
+		assertTrue(mockLoan instanceof ILoan);
+		LoanState state = LoanState.OVER_DUE;
+
+		//act on the object or method under test
+		Executable e = () -> mockLoan.commit(0, null);
+		Throwable t = assertThrows(RuntimeException.class,e);
+
+		//assert that the expected results have occurred
+		assertEquals("Loan: Cannot commit a non PENDING loan", t.getMessage());
 	}
 
+	
+	@Test
+	void testcommitLoanWhenDISCHARGED() {
+		//mockLoan = new ILoan(mockBook, mockLoan, 0, 0, LoanState.CURRENT);
+		assertTrue(mockLoan instanceof ILoan);
+		LoanState state = LoanState.DISCHARGED;
+
+		//act on the object or method under test
+		Executable e = () -> mockLoan.commit(0, null);
+		Throwable t = assertThrows(RuntimeException.class,e);
+
+		//assert that the expected results have occurred
+		assertEquals("Loan: Cannot commit a non PENDING loan", t.getMessage());
+	}
 }

@@ -21,7 +21,7 @@ public class Loan implements Serializable, ILoan {
     }
     
     public Loan(IBook book, IPatron patron) {
-        this(book, patron, 0, null, null);
+        this(book, patron, 0, null, null);		
     }
  
     
