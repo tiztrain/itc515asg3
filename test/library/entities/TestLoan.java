@@ -12,12 +12,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import static org.mockito.Mockito.*;
 
 import library.entities.ILoan.LoanState;
 
@@ -32,6 +34,7 @@ class TestLoan {
 	
 	int loanId;
 	Date dueDate;
+	LoanState state;
 	
 
 	@InjectMocks
@@ -57,66 +60,62 @@ class TestLoan {
 	@Test
 	void testCommitWhenPENDING() {
 		//arrange
-		LoanState state = LoanState.PENDING;
+		state = LoanState.PENDING;
 		
 		//act
-		assertEquals(0, loans.size()); //Error expected 1 but got 0
+		assertEquals(0, loans.size()); 
 		loan.commit(loanId, dueDate);
-		state = LoanState.CURRENT;
+		LoanState actual = LoanState.CURRENT;
+		verify(mockPatron).takeOutLoan(loan);
+		verify(mockBook).borrowFromLibrary();
 		
 		//assert
-		assertEquals(LoanState.CURRENT, state);
-		assertEquals(1, loans.size());
+		assertEquals(state, actual);
+		assertEquals(1, loans.size()); //Error expected 1 but got 0
 		assertTrue(mockBook.isOnLoan());
 	}
 	
-//	@Test
-//	void testCommitWhenCURRENT() {
-//		//arrange
-//		LoanState state = LoanState.PENDING;
-//		
-//		//act
-//		assertEquals(0, loans.size()); //Error expected 1 but got 0
-//		loan.commit(loanId, dueDate);
-//		state = LoanState.CURRENT;
-//		
-//		//assert
-//		assertEquals(LoanState.CURRENT, state);
-//		assertEquals(1, loans.size());
-//		assertTrue(mockBook.isOnLoan());
-//	}
-//	
-//	@Test
-//	void testCommitWhenOVERDUE() {
-//		//arrange
-//		LoanState state = LoanState.PENDING;
-//		
-//		//act
-//		assertEquals(0, loans.size()); //Error expected 1 but got 0
-//		loan.commit(loanId, dueDate);
-//		state = LoanState.CURRENT;
-//		
-//		//assert
-//		assertEquals(LoanState.CURRENT, state);
-//		assertEquals(1, loans.size());
-//		assertTrue(mockBook.isOnLoan());
-//	}
-//	
-//	@Test
-//	void testCommitWhenDISCHARGED() {
-//		//arrange
-//		LoanState state = LoanState.PENDING;
-//		
-//		//act
-//		assertEquals(0, loans.size()); //Error expected 1 but got 0
-//		loan.commit(loanId, dueDate);
-//		state = LoanState.CURRENT;
-//		
-//		//assert
-//		assertEquals(LoanState.CURRENT, state);
-//		assertEquals(1, loans.size());
-//		assertTrue(mockBook.isOnLoan());
-//	}
+	@Test
+	void testCommitWhenCURRENT() {
+		//arrange
+		loan = new Loan(mockBook, mockPatron, loanId, dueDate, LoanState.CURRENT);
+		//LoanState state = LoanState.CURRENT;
+		
+		//act
+		Executable e = () -> loan.commit(0, null);
+		Throwable t = assertThrows(RuntimeException.class,e);
+		
+		//assert
+		assertEquals("Cannot commit a non PENDING loan", t.getMessage());
+	}
+	
+	@Test
+	void testCommitWhenOVERDUE() {
+		//arrange
+		loan = new Loan(mockBook, mockPatron, loanId, dueDate, LoanState.OVER_DUE);
+		//LoanState state = LoanState.CURRENT;
+		
+		//act
+		Executable e = () -> loan.commit(0, null);
+		Throwable t = assertThrows(RuntimeException.class,e);
+		
+		//assert
+		assertEquals("Cannot commit a non PENDING loan", t.getMessage());
+	}
+	
+	@Test
+	void testCommitWhenDISCHARGED() {
+		//arrange
+		loan = new Loan(mockBook, mockPatron, loanId, dueDate, LoanState.DISCHARGED);
+		//LoanState state = LoanState.CURRENT;
+		
+		//act
+		Executable e = () -> loan.commit(0, null);
+		Throwable t = assertThrows(RuntimeException.class,e);
+		
+		//assert
+		assertEquals("Cannot commit a non PENDING loan", t.getMessage());
+	}
 
 
 
