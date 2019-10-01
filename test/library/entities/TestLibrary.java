@@ -94,8 +94,7 @@ class TestLibrary {
 		when(mockPatron.hasOverDueLoans()).thenReturn(false);
 		
 		//act on the object or method under test
-		boolean actual = library.patronCanBorrow(mockPatron);
-		// line 137 in Library needs to change to > instead of ==
+		boolean actual = library.patronCanBorrow(mockPatron); // line 137 in Library needs to be changed to > instead of ==
 		
 		//assert that the expected results have occurred
 		assertFalse(actual);
@@ -135,11 +134,10 @@ class TestLibrary {
 		//arrange all necessary preconditions and inputs
 		LoanState state = LoanState.PENDING;
 		
-		//Loan mockLoan = new Loan(mockBook, mockPatron, 0, null, state); //is this right?
-		ILoan mockLoan = loanHelper.makeLoan(mockBook, mockPatron);
+		Loan mockLoan = new Loan(mockBook, mockPatron, 0, null, state); //is this right?
+		//ILoan mockLoan = loanHelper.makeLoan(mockBook, mockPatron);
 		assertTrue(mockLoan instanceof ILoan);
 		assertEquals(state, LoanState.PENDING);
-		
 		
 		assertEquals(0, loans.size());
 		//when(mockLoan.commit(loanId, dueDate)).thenReturn(mockLoan);
@@ -148,9 +146,6 @@ class TestLibrary {
 		assertEquals(0, patrons.size());
 
 		//act on the object or method under test		
-		
-		//Loan actual = mockLoan.commit(loanId, dueDate);
-		
 		library.commitLoan(mockLoan);
 		
 
@@ -158,7 +153,7 @@ class TestLibrary {
 		assertEquals(1, loans.size());
 		assertEquals(1, currentLoans.size());
 		
-		assertTrue(mockBook.isOnLoan());
+		assertTrue(mockBook.isOnLoan()); //somehow the mockBook is not PENDING, AVIALABLE OR DAMAGED
 		assertEquals(state, LoanState.CURRENT);
 	}
 	
@@ -167,17 +162,11 @@ class TestLibrary {
 		//arrange all necessary preconditions and inputs
 		LoanState state = LoanState.PENDING;
 		when(mockBook.isAvailable()).thenReturn(true);
-		//Loan mockLoan = new Loan(mockBook, mockPatron, 0, null, state); //is this right?
 		
-		Book book = new Book("a","b","c",3);
-		Patron pat = new Patron("a","b","c",1,2);
-		ILoan mockLoan = library.issueLoan(book, pat);
-		assertTrue(loanHelper instanceof LoanHelper);
+		Loan mockLoan = new Loan(mockBook, mockPatron, 0, null, state); //is this right?		
 		assertTrue(mockLoan instanceof ILoan);
-
 		assertEquals(state, LoanState.PENDING);
-		
-		
+				
 		assertEquals(0, loans.size());
 		//when(mockLoan.commit(loanId, dueDate)).thenReturn(mockLoan);
 		when(loanHelper.makeLoan(any(Book.class), any(Patron.class))).thenReturn(mockLoan);
@@ -185,16 +174,13 @@ class TestLibrary {
 		assertEquals(0, patrons.size());
 
 		//act on the object or method under test		
-		
-		//Loan actual = mockLoan.commit(loanId, dueDate);
-		
 		library.commitLoan(mockLoan);
 
 		//assert that the expected results have occurred
-		assertEquals(1, loans.size()); //ERROR expect 1 but got 0
+		assertEquals(1, loans.size());
 		assertEquals(1, currentLoans.size());
 		
-		assertTrue(mockBook.isOnLoan());
+		assertTrue(mockBook.isOnLoan()); //somehow the mockBook is not PENDING, AVIALABLE OR DAMAGED
 		assertEquals(state, LoanState.CURRENT);
 	}
 	
@@ -215,10 +201,6 @@ class TestLibrary {
 		assertEquals(0, patrons.size());
 
 		//act on the object or method under test
-		
-		
-		//Loan actual = mockLoan.commit(loanId, dueDate);
-		
 		library.commitLoan(mockLoan);
 
 		//assert that the expected results have occurred
