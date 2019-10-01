@@ -26,7 +26,9 @@ import org.mockito.quality.Strictness;
 
 import static org.mockito.Mockito.*;
 
+import library.entities.IBook.BookState;
 import library.entities.ILoan.LoanState;
+import library.entities.IPatron.PatronState;
 import library.entities.helpers.BookHelper;
 import library.entities.helpers.IBookHelper;
 import library.entities.helpers.ILoanHelper;
@@ -53,6 +55,10 @@ class TestLibrary {
 	int loanId;
 	Date dueDate;
 	SimpleDateFormat format;
+	
+	LoanState loanState;
+	BookState bookState;
+	PatronState patronState;
 
 	@InjectMocks
 	Library library = new Library(bookHelper, patronHelper, loanHelper,
@@ -132,15 +138,15 @@ class TestLibrary {
 	@Test
 	void testCommitLoanWhenPENDING() {
 		//arrange all necessary preconditions and inputs
-		LoanState state = LoanState.PENDING;
+		loanState = LoanState.PENDING;
 		
-		Loan mockLoan = new Loan(mockBook, mockPatron, 0, null, state); //is this right?
-		//ILoan mockLoan = loanHelper.makeLoan(mockBook, mockPatron);
+		Loan mockLoan = new Loan(mockBook, mockPatron, 0, null, loanState); //is this right?
+			//ILoan mockLoan = loanHelper.makeLoan(mockBook, mockPatron);
 		assertTrue(mockLoan instanceof ILoan);
-		assertEquals(state, LoanState.PENDING);
+		assertEquals(loanState, LoanState.PENDING);
 		
 		assertEquals(0, loans.size());
-		//when(mockLoan.commit(loanId, dueDate)).thenReturn(mockLoan);
+			//when(mockLoan.commit(loanId, dueDate)).thenReturn(mockLoan);
 		when(loanHelper.makeLoan(any(Book.class), any(Patron.class))).thenReturn(mockLoan);
 		assertEquals(0, currentLoans.size());
 		assertEquals(0, patrons.size());
@@ -154,21 +160,21 @@ class TestLibrary {
 		assertEquals(1, currentLoans.size());
 		
 		assertTrue(mockBook.isOnLoan()); //somehow the mockBook is not PENDING, AVIALABLE OR DAMAGED
-		assertEquals(state, LoanState.CURRENT);
+		assertEquals(loanState, LoanState.CURRENT);
 	}
 	
 	@Test
 	void testCommitLoanWhenBookAVAILABLE() {
 		//arrange all necessary preconditions and inputs
-		LoanState state = LoanState.PENDING;
+		loanState = LoanState.PENDING;
 		when(mockBook.isAvailable()).thenReturn(true);
 		
-		Loan mockLoan = new Loan(mockBook, mockPatron, 0, null, state); //is this right?		
+		Loan mockLoan = new Loan(mockBook, mockPatron, 0, null, loanState); //is this right?		
 		assertTrue(mockLoan instanceof ILoan);
-		assertEquals(state, LoanState.PENDING);
+		assertEquals(loanState, LoanState.PENDING);
 				
 		assertEquals(0, loans.size());
-		//when(mockLoan.commit(loanId, dueDate)).thenReturn(mockLoan);
+			//when(mockLoan.commit(loanId, dueDate)).thenReturn(mockLoan);
 		when(loanHelper.makeLoan(any(Book.class), any(Patron.class))).thenReturn(mockLoan);
 		assertEquals(0, currentLoans.size());
 		assertEquals(0, patrons.size());
@@ -181,21 +187,21 @@ class TestLibrary {
 		assertEquals(1, currentLoans.size());
 		
 		assertTrue(mockBook.isOnLoan()); //somehow the mockBook is not PENDING, AVIALABLE OR DAMAGED
-		assertEquals(state, LoanState.CURRENT);
+		assertEquals(loanState, LoanState.CURRENT);
 	}
 	
 	@Test
 	void testCommitLoanWhenBookNotAVAILABLE() {
 		//arrange all necessary preconditions and inputs
-		LoanState state = LoanState.PENDING;
+		loanState = LoanState.PENDING;
 		when(mockBook.isAvailable()).thenReturn(false);
-		Loan mockLoan = new Loan(mockBook, mockPatron, 0, null, state); //is this right?
+		Loan mockLoan = new Loan(mockBook, mockPatron, 0, null, loanState); //is this right?
 		assertTrue(mockLoan instanceof ILoan);
-		assertEquals(state, LoanState.PENDING);
+		assertEquals(loanState, LoanState.PENDING);
 		
 		
 		assertEquals(0, loans.size());
-		//when(mockLoan.commit(loanId, dueDate)).thenReturn(mockLoan);
+			//when(mockLoan.commit(loanId, dueDate)).thenReturn(mockLoan);
 		when(loanHelper.makeLoan(any(Book.class), any(Patron.class))).thenReturn(mockLoan);
 		assertEquals(0, currentLoans.size());
 		assertEquals(0, patrons.size());
@@ -211,9 +217,10 @@ class TestLibrary {
 	
 	@Test
 	void testCommitLoanWhenCURRENT() {
-		//mockLoan = new ILoan(mockBook, mockLoan, 0, 0, LoanState.CURRENT);
+		//arrange
+			//mockLoan = new ILoan(mockBook, mockLoan, 0, 0, LoanState.CURRENT);
 		assertTrue(mockLoan instanceof ILoan);
-		LoanState state = LoanState.CURRENT;
+		loanState = LoanState.CURRENT;
 
 		//act on the object or method under test
 		Executable e = () -> mockLoan.commit(0, null);
@@ -226,9 +233,10 @@ class TestLibrary {
 	
 	@Test
 	void testCommitLoanWhenOVERDUE() {
-		//mockLoan = new ILoan(mockBook, mockLoan, 0, 0, LoanState.CURRENT);
+		//arrange
+			//mockLoan = new ILoan(mockBook, mockLoan, 0, 0, LoanState.CURRENT);
 		assertTrue(mockLoan instanceof ILoan);
-		LoanState state = LoanState.OVER_DUE;
+		loanState = LoanState.OVER_DUE;
 
 		//act on the object or method under test
 		Executable e = () -> mockLoan.commit(0, null);
@@ -241,9 +249,10 @@ class TestLibrary {
 	
 	@Test
 	void testcommitLoanWhenDISCHARGED() {
-		//mockLoan = new ILoan(mockBook, mockLoan, 0, 0, LoanState.CURRENT);
+		//arrange
+			//mockLoan = new ILoan(mockBook, mockLoan, 0, 0, LoanState.CURRENT);
 		assertTrue(mockLoan instanceof ILoan);
-		LoanState state = LoanState.DISCHARGED;
+		loanState = LoanState.DISCHARGED;
 
 		//act on the object or method under test
 		Executable e = () -> mockLoan.commit(0, null);
@@ -251,5 +260,54 @@ class TestLibrary {
 
 		//assert that the expected results have occurred
 		assertEquals("Loan: Cannot commit a non PENDING loan", t.getMessage());
+	}
+	
+	@Test
+	void testIssueLoan() {
+		//arrange
+		LoanState actual = LoanState.PENDING;
+		assertTrue(mockBook instanceof IBook);
+		assertTrue(mockPatron instanceof IPatron);
+		bookState = BookState.AVAILABLE;
+		patronState = PatronState.CAN_BORROW;
+		
+		//act
+		library.issueLoan(mockBook, mockPatron);
+		
+		//assert
+		assertEquals(actual, LoanState.PENDING);
+	}
+	
+	@Test
+	void testIssueLoanWhenBookOnLoan() {
+		//arrange
+		LoanState actual = LoanState.PENDING;
+		assertTrue(mockBook instanceof IBook);
+		assertTrue(mockPatron instanceof IPatron);
+		bookState = BookState.ON_LOAN;
+		patronState = PatronState.CAN_BORROW;
+		
+		//act
+		Executable e = () -> library.issueLoan(mockBook, mockPatron);
+		Throwable t = assertThrows(RuntimeException.class,e);
+		
+		//assert
+		
+	}
+	
+	@Test
+	void testIssueLoanWhenPatronRestricted() {
+		//arrange
+		LoanState actual = LoanState.PENDING;
+		assertTrue(mockBook instanceof IBook);
+		assertTrue(mockPatron instanceof IPatron);
+		bookState = BookState.AVAILABLE;
+		patronState = PatronState.RESTRICTED;
+		
+		//act
+		Executable e = () -> library.issueLoan(mockBook, mockPatron);
+		Throwable t = assertThrows(RuntimeException.class,e);
+		
+		//assert
 	}
 }
