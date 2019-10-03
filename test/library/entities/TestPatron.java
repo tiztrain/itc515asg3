@@ -78,6 +78,8 @@ public class TestPatron {
 //		//assert
 //		assertTrue(anyOverDueLoans);
 //	}
+	
+	// defect in Patron because you can't use methods to find out what state patron is in or they can borrow
 
 	@Test
 	void testTakeOutLoansWhenPatronCANBORROW() {

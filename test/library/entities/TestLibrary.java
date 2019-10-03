@@ -262,8 +262,11 @@ class TestLibrary {
 		assertEquals("Loan: Cannot commit a non PENDING loan", t.getMessage());
 	}
 	
+	// have realised that the method in Library.java does not check for the following preconditions
+	// so it does not require unit tests
+	// this is a defect
 	@Test
-	void testIssueLoan() {
+	void testIssueLoan() { 
 		//arrange
 		LoanState actual = LoanState.PENDING;
 		assertTrue(mockBook instanceof IBook);
