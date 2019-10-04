@@ -19,16 +19,21 @@ public class Patron implements Serializable, IPatron {
 
     private Map<Integer, ILoan> loans;
 
-
-    public Patron(String lastName, String firstName, String email, long phoneNo, int id) {
+    public Patron(String lastName, String firstName, String email, long phoneNo, int id,
+    		double finesPayable, Map<Integer, ILoan> loans, PatronState state) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.emailAddress = email;
         this.phoneNumber = phoneNo;
         this.id = id;
-        this.state = PatronState.CAN_BORROW;
+        
+        this.finesPayable = finesPayable == 0 ? 0.0 : finesPayable;
+        this.loans = loans == null ? new HashMap<>() : loans;
+        this.state = state == null ? PatronState.CAN_BORROW : state;
+    }
 
-        this.loans = new HashMap<>();
+    public Patron(String lastName, String firstName, String email, long phoneNo, int id) {
+        this(lastName, firstName, email, phoneNo, id, 0.0, null, null);
     }
 
 

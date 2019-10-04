@@ -29,20 +29,26 @@ public class Library implements Serializable, ILibrary {
     private IPatronHelper patronHelper;
     private ILoanHelper loanHelper;
 	
-
-    public Library(IBookHelper bookHelper, IPatronHelper patronHelper, ILoanHelper loanHelper) {
+    public Library(IBookHelper bookHelper, IPatronHelper patronHelper, ILoanHelper loanHelper,
+    		Map<Integer, IBook> catalog, Map<Integer, IPatron> patrons, Map<Integer, ILoan> loans,
+    		Map<Integer, ILoan> currentLoans, Map<Integer, IBook> damagedBooks,
+    		int currentlyIssuingBookId,int currentlyIssuingPatronId, int currentlyIssuingLoanId) {
         this.bookHelper = bookHelper;
         this.patronHelper = patronHelper;
         this.loanHelper = loanHelper;
         
-        catalog = new HashMap<>();
-        patrons = new HashMap<>();
-        loans = new HashMap<>();
-        currentLoans = new HashMap<>();
-        damagedBooks = new HashMap<>();
-        currentlyIssuingBookId = 1;
-        currentlyIssuingPatronId = 1;		
-        currentlyIssuingLoanId = 1;		
+        this.catalog = catalog == null ? new HashMap<>() : catalog;
+        this.patrons = patrons == null ? new HashMap<>() : patrons;
+        this.loans = loans == null ? new HashMap<>() : loans;
+        this.currentLoans = currentLoans == null ? new HashMap<>() : currentLoans;
+        this.damagedBooks = damagedBooks == null ? new HashMap<>() : damagedBooks;
+        this.currentlyIssuingBookId = currentlyIssuingBookId == 0 ? 1 : currentlyIssuingBookId;
+        this.currentlyIssuingPatronId = currentlyIssuingPatronId == 0 ? 1 : currentlyIssuingPatronId;
+        this.currentlyIssuingLoanId = currentlyIssuingLoanId == 0 ? 1 : currentlyIssuingLoanId;			
+    }
+
+    public Library(IBookHelper bookHelper, IPatronHelper patronHelper, ILoanHelper loanHelper) {
+        this(bookHelper, patronHelper, loanHelper, null, null, null, null, null, 0, 0, 0);	
     }
 
 	

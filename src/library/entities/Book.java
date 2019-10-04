@@ -9,15 +9,18 @@ public class Book implements Serializable, IBook {
     private String callNumber;
     private int id;
 
-    private BookState state;
+    BookState state;
 
-    
-    public Book(String author, String title, String callNo, int id) {
+    public Book(String author, String title, String callNo, int id, BookState state) {
         this.author = author;
         this.title = title;
         this.callNumber = callNo;
         this.id = id;
-        this.state = BookState.AVAILABLE;
+        this.state = state == null ? BookState.AVAILABLE : state;
+    }
+    
+    public Book(String author, String title, String callNo, int id) {
+        this(author, title, callNo, id, null);
     }
 
     

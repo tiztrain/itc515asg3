@@ -12,12 +12,16 @@ public class Loan implements Serializable, ILoan {
     private Date dueDate;
     private LoanState state;
 
-    
-    public Loan(IBook book, IPatron patron) {
+    public Loan(IBook book, IPatron patron, int loanId, Date dueDate, LoanState state) {
         this.book = book;
         this.patron = patron;
-
-        this.state = LoanState.PENDING;
+        this.loanId = loanId;
+        this.dueDate = dueDate;
+        this.state = state == null ? LoanState.PENDING : state;
+    }
+    
+    public Loan(IBook book, IPatron patron) {
+        this(book, patron, 0, null, null);		
     }
  
     
